@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Photo Archive</title>
+    <meta
+      name="description"
+      content="Archivo fotográfico colaborativo minimalista y editorial."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="archive-shell">
+      <div class="archive-stage" id="archive-stage" aria-live="polite"></div>
+
+      <h1 class="archive-title">2 EPIC</h1>
+      <p class="archive-quote">Everything will be fine, 
+        if we're leading from the heart</p>
+
+      <div class="archive-meta" aria-hidden="true">
+        <span class="archive-label">CARPETAZO</span>
+        <span class="archive-year">2026</span>
+      </div>
+
+      <div class="archive-footer" aria-hidden="true">
+        <span class="archive-count"><span id="photo-count">0</span> Fotos </span>
+        <button class="add-photos-btn" id="add-photos-btn" type="button" aria-label="Add photos">
+          + Subir Fotitos
+        </button>
+      </div>
+    </div>
+
+    <input
+      id="photo-upload"
+      type="file"
+      accept="image/jpeg,image/png,image/webp"
+      multiple
+      hidden
+    />
+
+    <div class="lightbox" id="lightbox" aria-hidden="true">
+      <div class="lightbox-backdrop" data-close="true"></div>
+      <div class="lightbox-panel">
+        <button class="lightbox-close" id="lightbox-close" type="button" aria-label="Close image">×</button>
+        <div class="lightbox-content">
+          <img class="lightbox-image" id="lightbox-image" src="" alt="Expanded archive photo" />
+          <div class="lightbox-details" id="lightbox-details">
+            <p class="lightbox-date" id="lightbox-date"></p>
+            <p class="lightbox-message" id="lightbox-message"></p>
+          </div>
+          <div class="lightbox-actions">
+            <button class="lightbox-action lightbox-download" id="lightbox-download" type="button">Download</button>
+            <button class="lightbox-action lightbox-delete" id="lightbox-delete" type="button">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="upload-modal" id="upload-modal" aria-hidden="true">
+      <div class="upload-modal-backdrop" data-close-upload="true"></div>
+      <div class="upload-modal-panel" role="dialog" aria-modal="true" aria-labelledby="upload-title">
+        <button class="upload-close" id="upload-close" type="button" aria-label="Close upload form">×</button>
+        <p class="upload-kicker" id="upload-title">Nuevo archivo</p>
+        <h2 class="upload-heading">Deja un mensaje corto</h2>
+        <p class="upload-subtitle"><span id="upload-file-count">1</span> foto seleccionada</p>
+
+        <form id="upload-form">
+          <label class="sr-only" for="upload-message">Mensaje</label>
+          <textarea
+            id="upload-message"
+            name="message"
+            maxlength="140"
+            rows="3"
+            placeholder="Hoy en la playa, con los chicos…"
+          ></textarea>
+
+          <div class="upload-actions">
+            <button type="button" class="upload-cancel" id="upload-cancel">Cancelar</button>
+            <button type="submit" class="upload-submit">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

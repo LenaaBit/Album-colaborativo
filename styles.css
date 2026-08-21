@@ -1,0 +1,470 @@
+:root {
+  --page-bg: #ffffff;
+  --ink: #101010;
+  --muted: rgba(16, 16, 16, 0.7);
+  --soft-shadow: rgba(17, 17, 17, 0.14);
+  --dark-overlay: rgba(0, 0, 0, 0.62);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--page-bg);
+  color: var(--ink);
+  font-family: "Helvetica Neue", Arial, sans-serif;
+}
+
+body {
+  overflow: hidden;
+}
+
+button, input {
+  font: inherit;
+}
+
+.archive-shell {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: #fff;
+}
+
+.archive-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  isolation: isolate;
+  background: #fff;
+  perspective: 1400px;
+  transform-style: preserve-3d;
+}
+
+.photo-card {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--photo-width);
+  height: var(--photo-height);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  background: #f5f5f5;
+  box-shadow: 0 10px 18px rgba(17, 17, 17, 0.06);
+  z-index: var(--z-index);
+  transform: translate3d(var(--x), var(--y), var(--depth)) rotate(var(--rotation)) scale(var(--scale));
+  transform-origin: center center;
+  transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 360ms ease, z-index 0s linear;
+  will-change: transform, box-shadow;
+  cursor: pointer;
+  transform-style: preserve-3d;
+}
+
+.photo-card:hover,
+.photo-card:focus-visible {
+  transform: translate3d(var(--x), var(--y), calc(var(--depth) + 50px)) rotate(var(--rotation)) scale(calc(var(--scale) + 0.08));
+  box-shadow: 0 22px 30px rgba(17, 17, 17, 0.08);
+  z-index: 1000;
+}
+
+.photo-card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  filter: saturate(0.95) contrast(1.04);
+}
+
+.photo-card.is-new {
+  animation: photoEnter 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes photoEnter {
+  0% {
+    opacity: 0;
+    transform: translate3d(var(--x), var(--y), calc(var(--depth) - 20px)) rotate(var(--rotation)) scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(var(--x), var(--y), var(--depth)) rotate(var(--rotation)) scale(var(--scale));
+  }
+}
+
+.archive-meta,
+.archive-footer {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  padding: 1.3rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 1500;
+  pointer-events: none;
+}
+
+.archive-title,
+.archive-quote {
+  position: absolute;
+  left: 50%;
+  z-index: 1600;
+  margin: 0;
+  transform: translateX(-50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+.archive-title {
+  top: 1.2rem;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.archive-quote {
+  top: 50%;
+  width: min(90vw, 620px);
+  font-size: clamp(1.15rem, 2.4vw, 1.8rem);
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+.archive-meta {
+  top: 0;
+}
+
+.archive-footer {
+  bottom: 0;
+}
+
+.archive-label,
+.archive-year,
+.archive-count,
+.add-photos-btn {
+  pointer-events: auto;
+  font-size: 10px;
+  line-height: 1;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.archive-year,
+.archive-label {
+  position: absolute;
+  top: 1.3rem;
+}
+
+.archive-label {
+  left: 1.5rem;
+}
+
+.archive-year {
+  right: 1.5rem;
+}
+
+.archive-count {
+  position: absolute;
+  left: 1.5rem;
+  bottom: 1.3rem;
+}
+
+.add-photos-btn {
+  position: absolute;
+  right: 1.5rem;
+  bottom: 1.15rem;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  color: rgba(16, 16, 16, 0.8);
+  transition: opacity 180ms ease;
+}
+
+.add-photos-btn:hover,
+.add-photos-btn:focus-visible {
+  opacity: 0.78;
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 200ms ease, visibility 200ms ease;
+  z-index: 2000;
+}
+
+.lightbox.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.58);
+}
+
+.lightbox-panel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(90vw, 1100px);
+  z-index: 1;
+}
+
+.lightbox-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  width: min(100%, 840px);
+}
+
+.lightbox-image {
+  display: block;
+  max-width: 100%;
+  max-height: 78vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  background: rgba(0, 0, 0, 0.15);
+  box-shadow: 0 32px 90px rgba(0, 0, 0, 0.2);
+}
+
+.lightbox-details {
+  width: min(100%, 620px);
+  padding: 0.4rem 0.1rem 0;
+  color: rgba(255, 255, 255, 0.88);
+  text-align: center;
+}
+
+.lightbox-date,
+.lightbox-message {
+  margin: 0;
+}
+
+.lightbox-date {
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.lightbox-message {
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.lightbox-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 0.7rem;
+}
+
+.lightbox-action {
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  background: rgba(255, 255, 255, 0.04);
+  color: #fff;
+  padding: 0.6rem 1rem;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.lightbox-delete {
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 2;
+  border: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.upload-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 200ms ease, visibility 200ms ease;
+  z-index: 2100;
+}
+
+.upload-modal.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.upload-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.upload-modal-panel {
+  position: relative;
+  z-index: 1;
+  width: min(90vw, 420px);
+  padding: 1.4rem 1.25rem 1.1rem;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.12);
+}
+
+.upload-kicker,
+.upload-subtitle {
+  margin: 0;
+  color: rgba(16, 16, 16, 0.6);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.64rem;
+}
+
+.upload-heading {
+  margin: 0.7rem 0 0.2rem;
+  font-size: clamp(1.4rem, 2vw, 2rem);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+
+.upload-subtitle {
+  margin-bottom: 1rem;
+}
+
+#upload-message {
+  width: 100%;
+  min-height: 88px;
+  resize: vertical;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: #fff;
+  padding: 0.85rem 0.9rem;
+  color: #111;
+  font-size: 0.96rem;
+}
+
+#upload-message:focus {
+  outline: 1px solid rgba(0, 0, 0, 0.3);
+  outline-offset: 1px;
+}
+
+.upload-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.upload-cancel,
+.upload-submit {
+  border: 0;
+  background: transparent;
+  padding: 0.66rem 0.9rem;
+  cursor: pointer;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.64rem;
+}
+
+.upload-cancel {
+  color: rgba(16, 16, 16, 0.7);
+}
+
+.upload-submit {
+  background: #111;
+  color: #fff;
+}
+
+.upload-close {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  border: 0;
+  background: transparent;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  color: rgba(16, 16, 16, 0.7);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 768px) {
+  body {
+    overflow: hidden;
+  }
+
+  .archive-meta,
+  .archive-footer {
+    padding: 1rem 1rem 1.2rem;
+  }
+
+  .archive-label,
+  .archive-year,
+  .archive-count,
+  .add-photos-btn {
+    letter-spacing: 0.14em;
+  }
+
+  .archive-label,
+  .archive-year {
+    top: 1rem;
+  }
+
+  .archive-label {
+    left: 1rem;
+  }
+
+  .archive-year {
+    right: 1rem;
+  }
+
+  .archive-count {
+    left: 1rem;
+    bottom: 1rem;
+  }
+
+  .add-photos-btn {
+    right: 1rem;
+    bottom: 1rem;
+  }
+
+  .photo-card {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  }
+}
